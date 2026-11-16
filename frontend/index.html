@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CU-BEMS · Energy Forecasting Dashboard</title>
+  <link rel="stylesheet" href="styles.css?v=activity-repair-9" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-icon">◈</span><div>CU-BEMS<span class="brand-sub">FORECASTING LAB</span></div></div>
+      <div class="nav-label">WORKSPACE</div>
+      <a class="nav-item active" href="#overview">▦ <span>Dashboard</span></a>
+      <a class="nav-item" href="#forecast">✦ <span>1–24h forecasts</span></a>
+      <a class="nav-item" href="#now">▥ <span>Current reading</span></a>
+      <a class="nav-item" href="#data">⇪ <span>Input data</span></a>
+      <a class="nav-item" href="#activities">▤ <span>Activity planner</span></a>
+      <a class="nav-item" href="#details">◷ <span>About forecasts</span></a>
+      <div class="sidebar-foot">CU-BEMS · 2019 models<br/>1h / 6h / 12h / 24h</div>
+    </aside>
+
+    <main class="main" id="overview">
+      <header class="topbar"><div class="eyebrow">RESEARCH PROJECT / ENERGY FORECASTING</div><div id="apiStatus" class="status">● Checking API…</div></header>
+      <section class="hero">
+        <div><div class="eyebrow">BUILDING ENERGY INTELLIGENCE</div><h1>Energy demand<br/><em>forecasting dashboard</em></h1><p>Generate short-term building electricity-demand forecasts using four trained LightGBM models.</p></div>
+        <div class="hero-mark">◈</div>
+      </section>
+
+      <section class="toolbar" id="data">
+        <div><h2>Generate predictions</h2><p>Choose real 2019 observations, explore simulated 2026 inputs, or upload compatible hourly data.</p></div>
+        <div class="actions"><button id="demoButton" class="btn secondary">2019 real data</button><button id="simButton" class="btn primary">▶ Simulate 2026</button><label for="csvInput" class="btn secondary">↑ Upload hourly CSV</label><input id="csvInput" type="file" accept=".csv,text/csv" hidden /></div>
+      </section>
+      <div id="message" class="message" role="status" aria-live="polite">Choose <strong>2019 real data</strong> or <strong>Simulate 2026</strong>. Your FastAPI server must be running locally.</div>
+
+      <div id="modeBanner" class="mode-banner" role="status"><strong>Choose your data mode.</strong> Real 2019 data and synthetic 2026 demonstrations are clearly labelled.</div>
+      <section id="now" class="section now-section">
+        <div class="section-heading"><div><div class="eyebrow">01 · ELECTRICITY DEMAND</div><h2>What is the electricity demand at the selected hour?</h2></div><span id="dataBadge" class="small-pill">Choose data mode</span></div>
+        <div class="now-card">
+          <div class="now-main"><div class="now-kicker">At the selected forecast starting time</div><div class="now-reading"><strong id="currentDemand">—</strong></div><div id="nowDatetime" class="now-datetime">Choose Run demo forecast to view the measured reading</div><p class="now-explainer">This is demand at the selected hour, in kilowatts (kW). Check the data-mode label to see whether it was measured or simulated.</p></div>
+          <div class="now-side"><div class="now-compare-label">Compared with the same hour yesterday</div><p id="historyComparison" class="now-compare-value">Awaiting measured data</p><div class="now-mini-grid"><div><span>Previous hour</span><strong id="previousHour">—</strong></div><div><span>Yesterday, same hour</span><strong id="yesterday">—</strong></div><div><span>Average of past 24h</span><strong id="dailyMean">—</strong></div></div></div>
+        </div>
+      </section>
+      <section id="forecast" class="section section-forecasts">
+        <div class="section-heading"><div><div class="eyebrow">NEXT 24 HOURS · MODEL PREDICTIONS</div><h2>What to expect — and what you can do</h2><p class="section-subtitle">Each number is the estimated demand at that future hour, not the total electricity used during the period.</p></div><span class="small-pill">Predictions · kW</span></div>
+        <div id="forecastCards" class="forecast-grid-v5">
+          <article class="forecast-card-v5 placeholder">1 hour ahead · Run demo forecast to view a prediction</article>
+          <article class="forecast-card-v5 placeholder">6 hours ahead · Run demo forecast to view a prediction</article>
+          <article class="forecast-card-v5 placeholder">12 hours ahead · Run demo forecast to view a prediction</article>
+          <article class="forecast-card-v5 placeholder">24 hours ahead · Run demo forecast to view a prediction</article>
+        </div>
+        <details class="forecast-chart-toggle"><summary>Compare forecast numbers in a chart</summary><div class="panel chart-panel"><div class="panel-heading"><div><h3>Four forecast snapshots</h3><p>These are not a continuous hourly prediction.</p></div></div><div id="chart" class="chart-empty">Run a forecast to display the chart.</div></div></details>
+      </section>
+      <section id="history" class="section history-lower">
+        <div class="section-heading"><div><div class="eyebrow">MEASURED BUILDING LOAD</div><h2>Explore the past</h2></div><span id="historyBadge" class="small-pill">Data mode not selected</span></div>
+        <div class="panel explorer-panel">
+          <div class="explorer-controls"><div><label for="originInput">Forecast starting time</label><input id="originInput" type="datetime-local" step="3600" value="2019-10-22T12:00" /><span class="hint">Choose a date and hour with an available reading. Simulated readings are not live measurements.</span></div><button id="exploreButton" class="btn primary">Explore this hour</button><div><label for="rangeSelect">Show previous</label><select id="rangeSelect"><option value="24">24 hours</option><option value="72">3 days</option><option value="168" selected>7 days</option></select></div></div>
+          
+          
+          <div class="panel-heading"><div><h3>Input electricity demand over time</h3><p>Data from the selected mode · missing hours are shown as gaps</p></div><span class="legend"><span class="dot"></span> Input demand</span></div>
+          <div id="historyChart" class="chart-empty">Run a forecast to display historical demand.</div>
+          <p class="hint" id="historyNote"></p>
+        </div>
+      </section>
+
+
+
+      <section id="activities" class="section activity-section">
+        <div class="section-heading"><div><div class="eyebrow">BUILDING OPERATIONS</div><h2>Activity planner &amp; manager notes</h2><p class="section-subtitle">Record why demand was unusual, or what's planned. Entries provide context for forecasts; they do not change the model's numbers.</p></div></div>
+        <div class="activity-layout">
+          <form id="activityForm" class="panel activity-form">
+            <div class="form-title">Add an activity</div>
+            <label for="activityCategory">What's happening?</label>
+            <select id="activityCategory" required><option>Classrooms fully occupied</option><option>University event / seminar</option><option>Examination</option><option>Extended laboratory usage</option><option>Maintenance</option><option>Other</option></select>
+            <div class="activity-form-grid">
+              <div><label for="activityDate">Date (AD)</label><div class="manager-date-wrap"><input id="activityDate" type="text" inputmode="numeric" placeholder="YYYY-MM-DD" maxlength="10" required pattern="\d{4}-\d{2}-\d{2}" autocomplete="off"/><button id="managerCalendarButton" class="manager-date-button" type="button" aria-label="Choose activity date on calendar" aria-expanded="false">▦</button><div id="managerCalendar" class="manager-calendar" hidden></div></div><span class="field-help">Example: 2026-11-13 (English/Gregorian year)</span></div>
+              <div><label for="activityStart">Start time</label><select id="activityStart" required><option value="00:00">12:00 AM</option><option value="00:30">12:30 AM</option><option value="01:00">1:00 AM</option><option value="01:30">1:30 AM</option><option value="02:00">2:00 AM</option><option value="02:30">2:30 AM</option><option value="03:00">3:00 AM</option><option value="03:30">3:30 AM</option><option value="04:00">4:00 AM</option><option value="04:30">4:30 AM</option><option value="05:00">5:00 AM</option><option value="05:30">5:30 AM</option><option value="06:00">6:00 AM</option><option value="06:30">6:30 AM</option><option value="07:00">7:00 AM</option><option value="07:30">7:30 AM</option><option value="08:00">8:00 AM</option><option value="08:30">8:30 AM</option><option value="09:00">9:00 AM</option><option value="09:30">9:30 AM</option><option value="10:00">10:00 AM</option><option value="10:30">10:30 AM</option><option value="11:00">11:00 AM</option><option value="11:30">11:30 AM</option><option value="12:00">12:00 PM</option><option value="12:30">12:30 PM</option><option value="13:00" selected>1:00 PM</option><option value="13:30">1:30 PM</option><option value="14:00">2:00 PM</option><option value="14:30">2:30 PM</option><option value="15:00">3:00 PM</option><option value="15:30">3:30 PM</option><option value="16:00">4:00 PM</option><option value="16:30">4:30 PM</option><option value="17:00">5:00 PM</option><option value="17:30">5:30 PM</option><option value="18:00">6:00 PM</option><option value="18:30">6:30 PM</option><option value="19:00">7:00 PM</option><option value="19:30">7:30 PM</option><option value="20:00">8:00 PM</option><option value="20:30">8:30 PM</option><option value="21:00">9:00 PM</option><option value="21:30">9:30 PM</option><option value="22:00">10:00 PM</option><option value="22:30">10:30 PM</option><option value="23:00">11:00 PM</option><option value="23:30">11:30 PM</option></select></div>
+              <div><label for="activityEnd">End time</label><select id="activityEnd" required><option value="00:00">12:00 AM</option><option value="00:30">12:30 AM</option><option value="01:00">1:00 AM</option><option value="01:30">1:30 AM</option><option value="02:00">2:00 AM</option><option value="02:30">2:30 AM</option><option value="03:00">3:00 AM</option><option value="03:30">3:30 AM</option><option value="04:00">4:00 AM</option><option value="04:30">4:30 AM</option><option value="05:00">5:00 AM</option><option value="05:30">5:30 AM</option><option value="06:00">6:00 AM</option><option value="06:30">6:30 AM</option><option value="07:00">7:00 AM</option><option value="07:30">7:30 AM</option><option value="08:00">8:00 AM</option><option value="08:30">8:30 AM</option><option value="09:00">9:00 AM</option><option value="09:30">9:30 AM</option><option value="10:00">10:00 AM</option><option value="10:30">10:30 AM</option><option value="11:00">11:00 AM</option><option value="11:30">11:30 AM</option><option value="12:00">12:00 PM</option><option value="12:30">12:30 PM</option><option value="13:00">1:00 PM</option><option value="13:30">1:30 PM</option><option value="14:00">2:00 PM</option><option value="14:30">2:30 PM</option><option value="15:00">3:00 PM</option><option value="15:30">3:30 PM</option><option value="16:00">4:00 PM</option><option value="16:30">4:30 PM</option><option value="17:00" selected>5:00 PM</option><option value="17:30">5:30 PM</option><option value="18:00">6:00 PM</option><option value="18:30">6:30 PM</option><option value="19:00">7:00 PM</option><option value="19:30">7:30 PM</option><option value="20:00">8:00 PM</option><option value="20:30">8:30 PM</option><option value="21:00">9:00 PM</option><option value="21:30">9:30 PM</option><option value="22:00">10:00 PM</option><option value="22:30">10:30 PM</option><option value="23:00">11:00 PM</option><option value="23:30">11:30 PM</option><option value="23:59">11:59 PM</option></select></div>
+              <div><label for="activityRepeat">Repeat</label><select id="activityRepeat"><option value="none">Once</option><option value="weekly">Every week</option></select></div>
+              <div id="repeatUntilWrap" class="hidden"><label for="activityRepeatUntil">Repeat until (AD)</label><input id="activityRepeatUntil" type="text" placeholder="YYYY-MM-DD" maxlength="10" pattern="\d{4}-\d{2}-\d{2}"/></div>
+            </div>
+            <label for="activityNotes">Details (optional)</label><textarea id="activityNotes" rows="2" maxlength="500" placeholder="e.g. All classrooms occupied from 1–5 PM, auditorium seminar"></textarea>
+            <div class="activity-actions"><button type="submit" class="btn primary" id="saveActivity">Save activity</button><span id="activityStatus" role="status" aria-live="polite">Saved notes appear beside matching forecast hours.</span></div>
+          </form>
+          <div class="panel activity-log"><div class="form-title">Activity log</div><p>Recent records for the selected data mode</p><div id="activityList" class="activity-list">No activities recorded yet.</div></div>
+        </div>
+      </section>
+
+      <section id="details" class="section end-section">
+        <div class="section-heading"><div><div class="eyebrow">MORE INFORMATION</div><h2>About these forecasts</h2></div></div>
+        <div class="facts-grid">
+          <div class="fact-card"><div class="fact-icon">◷</div><div><span class="fact-label">Forecast starting time</span><strong id="detailOrigin">—</strong><small>The moment the model uses to predict forward</small></div></div>
+          <div class="fact-card"><div class="fact-icon">◈</div><div><span class="fact-label">Prediction windows</span><strong>1h · 6h · 12h · 24h</strong><small>Four trained LightGBM models</small></div></div>
+          <div class="fact-card"><div class="fact-icon">▥</div><div><span class="fact-label">Source</span><strong id="sourceData">Choose a mode</strong><small id="sourceNote">2019 measured data or 2026 simulated data</small></div></div>
+        </div>
+        <details class="method-disclosure"><summary><span>About the data &amp; forecast reliability</span><span class="disclosure-help">What can affect the estimates?</span></summary><div id="qualityContent" class="quality-text">Run a forecast to see data-availability notes.</div><p class="disclosure-footnote">Missing values are never treated as zero. Synthetic 2026 readings and their predictions are NOT actual live demand or verified forecasts for today. Advice is for demonstration only and never controls equipment.</p></details>
+      </section>
+      <footer><span>CU-BEMS energy forecasting · Experimental research dashboard</span><span>Predictions are estimates, not measured demand.</span></footer>
+    </main>
+  </div>
+  <script src="app.js?v=activity-repair-9" defer></script>
+</body>
+</html>
